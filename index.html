@@ -378,7 +378,7 @@
             statusDiv.classList.add('hidden');
 
             // Data Preparation
-            const formData = new FormData();
+            const params = new URLSearchParams();
             formData.append('name', name);
             formData.append('class', sClass);
             formData.append('score', `${score}/${totalQ}`);
@@ -389,7 +389,7 @@
             // Send Data
             fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
-                body: formData
+              body: params.
             })
             .then(response => {
                 // Google Apps Script redirects on success, or returns JSON
@@ -417,3 +417,4 @@
 </body>
 
 </html>=
+
