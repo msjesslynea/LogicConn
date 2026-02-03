@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUET Task 2: Reason vs. Method</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Custom Scrollbar for textareas */
+        textarea::-webkit-scrollbar { width: 8px; }
+        textarea::-webkit-scrollbar-track { background: #f1f1f1; }
+        textarea::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        textarea::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Loader */
+        .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #0d9488; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-teal-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-pen-nib text-2xl"></i>
+                <div>
+                    <h1 class="font-bold text-lg md:text-xl leading-tight">MUET Task 2: Writing</h1>
+                    <p class="text-xs text-teal-200">Elaboration Skills: Why (Reason) vs. How (Method)</p>
+                </div>
+            </div>
+            <div class="text-sm font-semibold bg-teal-800 px-3 py-1 rounded-full border border-teal-600">
+                Unit: Environment
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow w-full max-w-4xl mx-auto px-4 py-8 space-y-12">
+
+        <!-- Intro Section -->
+        <section class="bg-white rounded-2xl shadow-sm p-6 border-l-4 border-teal-500">
+            <h2 class="text-xl font-bold mb-3 text-slate-800">Understanding the Distinction</h2>
+            <p class="text-slate-600 mb-4 leading-relaxed">
+                In MUET Task 2 (Essay Writing), strong paragraphs require both <strong>Reasons</strong> and <strong>Methods</strong>.
+            </p>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                    <h3 class="font-bold text-blue-800 mb-2"><i class="fa-solid fa-brain mr-2"></i>The Reason (Why)</h3>
+                    <p class="text-sm text-blue-700">Explains the logic, purpose, justification, or benefit. It answers "Why should we do this?"</p>
+                </div>
+                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                    <h3 class="font-bold text-emerald-800 mb-2"><i class="fa-solid fa-hand-holding-seedling mr-2"></i>The Method (How)</h3>
+                    <p class="text-sm text-emerald-700">Explains the physical actions, steps, or processes. It answers "How do we actually do it?"</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Part 1: Quiz -->
+        <section id="quiz-section">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">Part 1: Categorization Quiz</h2>
+                <span id="score-display" class="bg-slate-800 text-white px-4 py-1 rounded-full text-sm font-mono hidden">Score: 0/10</span>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="p-6 bg-slate-100 border-b border-slate-200 flex justify-between items-center">
+                    <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Statement <span id="q-current">1</span> of 10</span>
+                    <div class="h-2 w-24 bg-slate-300 rounded-full overflow-hidden">
+                        <div id="progress-bar" class="h-full bg-teal-600 transition-all duration-300" style="width: 10%"></div>
+                    </div>
+                </div>
+
+                <div class="p-8 min-h-[300px] flex flex-col justify-center items-center text-center fade-in" id="question-container">
+                    <!-- Dynamic Question Content -->
+                    <p id="question-text" class="text-xl md:text-2xl font-medium text-slate-800 mb-8 leading-relaxed">
+                        Loading...
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md" id="options-container">
+                        <button onclick="checkAnswer('Reason')" class="flex-1 py-4 px-6 rounded-xl border-2 border-blue-200 bg-white hover:bg-blue-50 hover:border-blue-400 transition-all group">
+                            <span class="block text-blue-600 font-bold group-hover:scale-105 transition-transform">It's a Reason (Why)</span>
+                        </button>
+                        <button onclick="checkAnswer('Method')" class="flex-1 py-4 px-6 rounded-xl border-2 border-emerald-200 bg-white hover:bg-emerald-50 hover:border-emerald-400 transition-all group">
+                            <span class="block text-emerald-600 font-bold group-hover:scale-105 transition-transform">It's a Method (How)</span>
+                        </button>
+                    </div>
+
+                    <!-- Feedback Area -->
+                    <div id="feedback" class="hidden mt-8 w-full max-w-lg p-4 rounded-lg text-left"></div>
+                    
+                    <button id="next-btn" onclick="nextQuestion()" class="hidden mt-6 bg-slate-800 text-white px-8 py-3 rounded-lg hover:bg-slate-900 transition-colors font-semibold">
+                        Next Statement <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+                
+                <!-- Quiz Completion View -->
+                <div id="quiz-end" class="hidden p-10 text-center">
+                    <div class="mb-6">
+                        <i class="fa-solid fa-trophy text-5xl text-yellow-400 mb-4 block"></i>
+                        <h3 class="text-2xl font-bold text-slate-800">Quiz Completed!</h3>
+                    </div>
+                    <p class="text-lg text-slate-600 mb-6">You scored <span id="final-score" class="font-bold text-teal-600 text-xl">0</span> out of 10.</p>
+                    <button onclick="scrollToWriting()" class="bg-teal-600 text-white px-8 py-3 rounded-lg hover:bg-teal-700 shadow-md transition-all">
+                        Proceed to Writing Task
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Part 2: Writing Task -->
+        <section id="writing-section" class="pt-8 border-t border-slate-200">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Part 2: Writing Application</h2>
+                <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 text-sm text-orange-800">
+                    <strong>Topic:</strong> All schools should make recycling and separating rubbish a compulsory programme.
+                </div>
+            </div>
+
+            <p class="text-slate-600 mb-6">
+                Below are three <strong>Reasons</strong>. Your job is to write a practical <strong>Method</strong> (the physical steps) for each.
+            </p>
+
+            <div class="space-y-8">
+                <!-- Task 1 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200">
+                    <div class="bg-slate-50 p-4 border-b border-slate-200 flex items-start gap-3">
+                        <div class="bg-blue-100 text-blue-700 p-2 rounded-lg shrink-0">
+                            <i class="fa-solid fa-lightbulb"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase">Reason 1</span>
+                            <p class="font-medium text-slate-800">To instill lifelong habits of sustainability and environmental care in the student body.</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <label class="block text-sm font-semibold text-slate-600 mb-2">Write your Method (How):</label>
+                        <textarea id="input-1" rows="3" class="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all mb-4" placeholder="e.g., The school administration can..."></textarea>
+                        
+                        <div class="border-t border-slate-100 pt-4">
+                            <button onclick="toggleAnswer(1)" class="text-teal-600 text-sm font-semibold hover:text-teal-800 flex items-center gap-2">
+                                <i class="fa-solid fa-eye"></i> View Suggested Method
+                            </button>
+                            <div id="answer-1" class="hidden mt-3 bg-emerald-50 p-4 rounded-lg border border-emerald-100 text-sm text-slate-700">
+                                <span class="font-bold text-emerald-800 block mb-1">Suggested Method:</span>
+                                Teachers can integrate hands-on recycling activities into the weekly curriculum, such as assigning students to manage classroom recycling bins on a rotating roster.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task 2 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200">
+                    <div class="bg-slate-50 p-4 border-b border-slate-200 flex items-start gap-3">
+                        <div class="bg-blue-100 text-blue-700 p-2 rounded-lg shrink-0">
+                            <i class="fa-solid fa-lightbulb"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase">Reason 2</span>
+                            <p class="font-medium text-slate-800">To significantly reduce the school’s carbon footprint and the amount of waste sent to local landfills.</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <label class="block text-sm font-semibold text-slate-600 mb-2">Write your Method (How):</label>
+                        <textarea id="input-2" rows="3" class="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all mb-4" placeholder="e.g., The canteen operators should..."></textarea>
+                        
+                        <div class="border-t border-slate-100 pt-4">
+                            <button onclick="toggleAnswer(2)" class="text-teal-600 text-sm font-semibold hover:text-teal-800 flex items-center gap-2">
+                                <i class="fa-solid fa-eye"></i> View Suggested Method
+                            </button>
+                            <div id="answer-2" class="hidden mt-3 bg-emerald-50 p-4 rounded-lg border border-emerald-100 text-sm text-slate-700">
+                                <span class="font-bold text-emerald-800 block mb-1">Suggested Method:</span>
+                                The school management should ban single-use plastics in the canteen and require all students and staff to bring their own reusable food containers and cutlery.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task 3 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200">
+                    <div class="bg-slate-50 p-4 border-b border-slate-200 flex items-start gap-3">
+                        <div class="bg-blue-100 text-blue-700 p-2 rounded-lg shrink-0">
+                            <i class="fa-solid fa-lightbulb"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase">Reason 3</span>
+                            <p class="font-medium text-slate-800">To generate a small income for the school’s Student Council by selling sorted recyclables to vendors.</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <label class="block text-sm font-semibold text-slate-600 mb-2">Write your Method (How):</label>
+                        <textarea id="input-3" rows="3" class="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all mb-4" placeholder="e.g., The Student Council can..."></textarea>
+                        
+                        <div class="border-t border-slate-100 pt-4">
+                            <button onclick="toggleAnswer(3)" class="text-teal-600 text-sm font-semibold hover:text-teal-800 flex items-center gap-2">
+                                <i class="fa-solid fa-eye"></i> View Suggested Method
+                            </button>
+                            <div id="answer-3" class="hidden mt-3 bg-emerald-50 p-4 rounded-lg border border-emerald-100 text-sm text-slate-700">
+                                <span class="font-bold text-emerald-800 block mb-1">Suggested Method:</span>
+                                The Student Council can set up a collection center every Friday where they weigh the separated paper, aluminum, and plastics before selling them to a licensed recycling vendor.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submission Section -->
+                <div class="bg-slate-800 rounded-xl p-6 md:p-8 text-white mt-12 mb-12">
+                    <h3 class="text-xl font-bold mb-4"><i class="fa-solid fa-paper-plane mr-2"></i>Submit Your Work</h3>
+                    <p class="text-slate-300 mb-6 text-sm">Enter your details below to submit your quiz score and written responses to your teacher.</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">Student Name</label>
+                            <input type="text" id="student-name" class="w-full bg-slate-700 border border-slate-600 rounded p-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-teal-500 outline-none" placeholder="e.g., Ali Bin Ahmad">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">Class / ID</label>
+                            <input type="text" id="student-class" class="w-full bg-slate-700 border border-slate-600 rounded p-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-teal-500 outline-none" placeholder="e.g., 6 Atas 1">
+                        </div>
+                    </div>
+
+                    <button onclick="submitToGoogleSheet()" id="submit-btn" class="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-4 rounded-lg transition-all flex justify-center items-center gap-2">
+                        Submit Assignment
+                    </button>
+                    
+                    <div id="submit-status" class="hidden mt-4 text-center p-3 rounded bg-slate-700 border border-slate-600"></div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-slate-400 py-8 mt-12 text-center text-sm">
+        <p>&copy; 2024 MUET Prep • Designed for Interactive Learning</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // ----------------------------------------------------
+        // TEACHER SETUP: PASTE YOUR GOOGLE WEB APP URL HERE
+        // ----------------------------------------------------
+        const GOOGLE_SCRIPT_URL = "https://docs.google.com/spreadsheets/d/1PgCiw-HfBJ_ptWssrh-qT9xiAhRy4DdKJmdutoVddGo/edit?gid=0#gid=0"; 
+        // Example: "https://script.google.com/macros/s/AKfycbx.../exec"
+        // ----------------------------------------------------
+
+        // Quiz Data
+        const questions = [
+            { text: "Schools organize a 'Green Day' every Friday where students bring their own food containers.", type: "Method", explanation: "This describes a specific action/event organized by the school." },
+            { text: "Trees are planted around the school compound to provide shade and lower the temperature.", type: "Method", explanation: "This describes the physical action of planting trees, even though the purpose is mentioned." },
+            { text: "The headmaster signs a contract with a local recycling company to collect paper and plastic once a week.", type: "Method", explanation: "This describes a procedural step or action taken by the administration." },
+            { text: "Reducing paper usage is important because it helps to conserve forest resources and protect biodiversity.", type: "Reason", explanation: "This explains the logic or benefit (conservation) rather than a specific physical action." },
+            { text: "Students are required to wash and dry their plastic bottles before placing them in the recycling bin.", type: "Method", explanation: "This describes the specific physical steps students must take." },
+            { text: "The government implements a 'No Plastic Bag' policy to decrease the amount of non-biodegradable waste.", type: "Method", explanation: "This describes the implementation of a policy (action)." },
+            { text: "Canteen workers separate organic food scraps into a designated bin for composting.", type: "Method", explanation: "This describes the physical process of separating waste." },
+            { text: "It is necessary to educate the youth on environmental issues so they can become responsible citizens.", type: "Reason", explanation: "This is a justification or argument for why education is needed." },
+            { text: "A digital scoreboard is used to track the weight of recycled materials collected by each class.", type: "Method", explanation: "This describes the tool and process used to monitor progress." },
+            { text: "Schools save money on waste disposal fees by reducing the total volume of rubbish they produce.", type: "Reason", explanation: "This highlights a financial benefit/result, not the physical act of recycling itself." }
+        ];
+
+        let currentQIndex = 0;
+        let score = 0;
+        const totalQ = questions.length;
+
+        // Elements
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackDiv = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const qCurrentSpan = document.getElementById('q-current');
+        const progressBar = document.getElementById('progress-bar');
+        const scoreDisplay = document.getElementById('score-display');
+        
+        // Initialize Quiz
+        function loadQuestion() {
+            const q = questions[currentQIndex];
+            feedbackDiv.className = "hidden mt-8 w-full max-w-lg p-4 rounded-lg text-left";
+            nextBtn.classList.add('hidden');
+            optionsContainer.classList.remove('hidden');
+            questionText.innerText = q.text;
+            qCurrentSpan.innerText = currentQIndex + 1;
+            const progress = ((currentQIndex) / totalQ) * 100;
+            progressBar.style.width = `${progress}%`;
+            const buttons = optionsContainer.getElementsByTagName('button');
+            for(let btn of buttons) {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function checkAnswer(selectedType) {
+            const q = questions[currentQIndex];
+            const isCorrect = selectedType === q.type;
+            const buttons = optionsContainer.getElementsByTagName('button');
+            for(let btn of buttons) {
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+            feedbackDiv.classList.remove('hidden');
+            if (isCorrect) {
+                score++;
+                scoreDisplay.innerText = `Score: ${score}/${totalQ}`;
+                feedbackDiv.classList.add('bg-green-100', 'border', 'border-green-200');
+                feedbackDiv.innerHTML = `<div class="flex items-start gap-3 text-green-800"><i class="fa-solid fa-circle-check mt-1 text-xl"></i><div><p class="font-bold">Correct!</p><p class="text-sm mt-1">${q.explanation}</p></div></div>`;
+            } else {
+                feedbackDiv.classList.add('bg-red-50', 'border', 'border-red-200');
+                feedbackDiv.innerHTML = `<div class="flex items-start gap-3 text-red-800"><i class="fa-solid fa-circle-xmark mt-1 text-xl"></i><div><p class="font-bold">Not quite.</p><p class="text-sm mt-1">The correct answer is <strong>${q.type}</strong>.</p><p class="text-sm mt-1 text-red-700">${q.explanation}</p></div></div>`;
+            }
+            nextBtn.classList.remove('hidden');
+            scoreDisplay.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQIndex++;
+            if (currentQIndex < totalQ) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            document.getElementById('question-container').classList.add('hidden');
+            document.getElementById('quiz-end').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+            progressBar.style.width = "100%";
+        }
+
+        function scrollToWriting() {
+            document.getElementById('writing-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleAnswer(id) {
+            const answerDiv = document.getElementById(`answer-${id}`);
+            const btn = event.currentTarget;
+            if (answerDiv.classList.contains('hidden')) {
+                answerDiv.classList.remove('hidden');
+                answerDiv.classList.add('fade-in');
+                btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Hide Suggested Method';
+            } else {
+                answerDiv.classList.add('hidden');
+                btn.innerHTML = '<i class="fa-solid fa-eye"></i> View Suggested Method';
+            }
+        }
+
+        // ----------------------------------------------------
+        // GOOGLE SHEETS SUBMISSION LOGIC
+        // ----------------------------------------------------
+        function submitToGoogleSheet() {
+            const btn = document.getElementById('submit-btn');
+            const statusDiv = document.getElementById('submit-status');
+            const name = document.getElementById('student-name').value;
+            const sClass = document.getElementById('student-class').value;
+            const m1 = document.getElementById('input-1').value;
+            const m2 = document.getElementById('input-2').value;
+            const m3 = document.getElementById('input-3').value;
+
+            // Validation
+            if (!GOOGLE_SCRIPT_URL) {
+                alert("Teacher Error: The Google Script URL has not been set in the code yet.");
+                return;
+            }
+            if (!name || !sClass) {
+                alert("Please enter your Name and Class before submitting.");
+                return;
+            }
+
+            // UI Loading State
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loader mr-2"></span> Submitting...';
+            statusDiv.classList.add('hidden');
+
+            // Data Preparation
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('class', sClass);
+            formData.append('score', `${score}/${totalQ}`);
+            formData.append('method1', m1);
+            formData.append('method2', m2);
+            formData.append('method3', m3);
+
+            // Send Data
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                // Google Apps Script redirects on success, or returns JSON
+                // We assume success if no network error occurred
+                btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Submitted!';
+                btn.classList.remove('bg-teal-600', 'hover:bg-teal-500');
+                btn.classList.add('bg-green-600', 'hover:bg-green-500');
+                
+                statusDiv.classList.remove('hidden');
+                statusDiv.innerHTML = '<span class="text-green-400 font-bold">Success!</span> Your work has been sent to the teacher.';
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                btn.disabled = false;
+                btn.innerHTML = 'Submit Assignment';
+                statusDiv.classList.remove('hidden');
+                statusDiv.innerHTML = '<span class="text-red-400 font-bold">Error!</span> Something went wrong. Please try again.';
+            });
+        }
+
+        // Start
+        loadQuestion();
+
+    </script>
+</body>
+</html>=
